@@ -3,12 +3,52 @@ import prisma from "../db/prisma.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
-export const login =  (request:Request, response:Response) => {
-  response.send('login');
+export const login = async (request:Request, response:Response, next: NextFunction) => {
+  try {
+    const { username, password} = request.body;
+
+    if(!(username && password)) {
+      response.status(400).json({
+        message: 'all fields are required'
+      });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { username }
+    });
+
+    const passwordCorrect = user? await bcrypt.compare(password, user.passwordHash) : false; 
+
+    if(!user || !passwordCorrect) {
+      response.status(400).json({
+        error: 'incorrect username or password'
+      });
+      return;
+    }
+    
+    generateToken(user.id, response);
+
+    response.status(200).json({
+      id: user.id,
+      fullName: user.fullName,
+      username: user.username,
+      profilePicture: user.profilePicture
+    });
+  }
+  catch (error) {
+    next(error);
+  }
 }
 
 export const logout =  (request:Request, response:Response) => {
-  response.send('logout');
+  response.cookie('jwt', '', {
+    maxAge: 0,
+  });
+
+  response.status(200).json({
+    message: 'logged out successfully'
+  });
 }
 
 export const register =  async (request:Request, response:Response, next: NextFunction) => {
@@ -17,14 +57,16 @@ export const register =  async (request:Request, response:Response, next: NextFu
 
     if(!(firstName && lastName && username && password && confirmPassword)) {
       response.status(400).json({
-        message: 'all fields are required'
+        error: 'all fields are required'
       });
+      return;
     }
 
     if(password !== confirmPassword) {
       response.status(400).json({
-        message: "passwords don't match"
+        error: "passwords don't match"
       });
+      return;
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -40,26 +82,49 @@ export const register =  async (request:Request, response:Response, next: NextFu
         passwordHash,
       }
     });
+    
+    generateToken(user.id, response);
 
-    if(user) {
-      generateToken(user.id, response);
-
-      response.status(201).json({
-        id: user.id,
-        fullName: user.fullName,
-        username: user.username,
-        profilePicture: user.profilePicture
-      });
-    }
-    else {
-      response.status(400).json( {error: 'invalid data' });
-    }
+    response.status(201).json({
+      id: user.id,
+      fullName: user.fullName,
+      username: user.username,
+      profilePicture: user.profilePicture
+    });
   }
   catch (error) {
     next(error);
   }
 }
 
-export const getMe =  (request:Request, response:Response) => {
-  response.send('my info');
+export const getMe = async (request:Request, response:Response, next: NextFunction) => {
+  try {
+    if(!request.user) {
+      response.status(401).json({
+        error: 'unauthorized'
+      });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {id: request.user.id}
+    });
+
+    if(!user) {
+      response.status(404).json({
+        error: 'user not found'
+      });
+      return;
+    }
+
+    response.status(200).json({
+      id: user.id,
+      fullName: user.fullName,
+      username: user.username,
+      profilePicture: user.profilePicture
+    });
+  }
+  catch (error) {
+    next(error);
+  }
 }
