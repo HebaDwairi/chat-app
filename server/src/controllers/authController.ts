@@ -9,7 +9,9 @@ export const logout =  (request:Request, response:Response) => {
 }
 
 export const register =  (request:Request, response:Response) => {
-  response.send('registered');
+
+  const { firstName, lastName, username, password, confirmPassword } = request.body;
+  
 }
 
 export const getMe =  (request:Request, response:Response) => {
