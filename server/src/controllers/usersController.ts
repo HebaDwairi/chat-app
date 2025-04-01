@@ -128,3 +128,36 @@ export const getMe = async (request:Request, response:Response, next: NextFuncti
     next(error);
   }
 }
+
+export const searchUsers = async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const { query, page=1, limit=15 } = request.query;
+
+    if(!request.user) {
+      response.status(401).json({error: 'unauthorized'});
+      return;
+    }
+
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { fullName: { contains: query as string, mode: 'insensitive' } },
+          { username: { contains: query as string, mode: 'insensitive' } },
+        ],
+        NOT: { id: request.user.id }
+      },
+      take: Number(limit),
+      skip: Number(limit) * (Number(page) - 1), 
+      select: {
+        id: true,
+        fullName: true,
+        profilePicture: true,
+      }
+    });
+    
+    response.status(200).json(users);
+  }
+  catch (error) {
+    next(error);
+  }
+ }

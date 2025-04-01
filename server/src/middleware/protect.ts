@@ -3,7 +3,15 @@ import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
 import prisma from "../db/prisma.js";
 
-
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+      };
+    }
+  }
+}
 
 interface DecodedToken extends JwtPayload {
   id: string

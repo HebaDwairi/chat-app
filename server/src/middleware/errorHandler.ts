@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-const { PrismaClientKnownRequestError, PrismaClientValidationError } = require('@prisma/client/runtime/library');
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 const errorHandler = (err: any, request: Request, response: Response, next: NextFunction) => {
 

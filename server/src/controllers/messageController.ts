@@ -11,7 +11,7 @@ export const sendMessage = async (request: Request, response: Response, next: Ne
 
     const senderId = request.user.id;
     const receiverId = request.params.id;
-    const messageContent = request.body;
+    const messageContent = request.body.content;
 
     let conversation = await prisma.conversation.findFirst({
       where: {
@@ -149,41 +149,14 @@ export const getChats = async (request: Request, response: Response, next: NextF
       }
     });
 
-    response.status(200).json(conversations);
-  }
-  catch (error) {
-    next(error);
-  }
-}
-
-
-export const searchUsers = async (request: Request, response: Response, next: NextFunction) => {
-  try {
-    const { query, page=1, limit=15 } = request.query;
-
-    if(!request.user) {
-      response.status(401).json({error: 'unauthorized'});
-      return;
-    }
-
-    const users = await prisma.user.findMany({
-      where: {
-        OR: [
-          { fullName: { contains: query as string, mode: 'insensitive' } },
-          { username: { contains: query as string, mode: 'insensitive' } },
-        ],
-        NOT: { id: request.user.id }
-      },
-      take: Number(limit),
-      skip: Number(limit) * (Number(page) - 1), 
-      select: {
-        id: true,
-        fullName: true,
-        profilePicture: true,
+    const chats = conversations.map(e => {
+      return {
+        user: e.participants[0].user,
+        message: e.messages[0],
       }
     });
-    
-    response.status(200).json(users);
+
+    response.status(200).json(chats);
   }
   catch (error) {
     next(error);
