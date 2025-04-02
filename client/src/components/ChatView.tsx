@@ -2,7 +2,7 @@
 
 const ChatView = () => {
   return (
-    <div>
+    <div className="w-full md:w-7/10 flex justify-center">
       chatcontent
     </div>
   )
