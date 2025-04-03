@@ -12,7 +12,9 @@ const ChatView = () => {
 
   
   if(isLoading) {
-    return <Loading />;
+    return <div className="w-full md:w-7/10 flex align-center flex-col">
+      <Loading />
+    </div>;
   }
   const chatUser = data.receiver;
 

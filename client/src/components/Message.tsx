@@ -20,7 +20,7 @@ const Message : React.FC<MessageProps>= ({ start, data, user}) => {
           <span >{user.fullName}</span>
           <time className="text-xs opacity-50">{ formattedDate }</time>
         </div>
-        <div className={`${start ? 'chat-bubble' : 'chat-bubble chat-bubble-primary'}`}>
+        <div className={`${start ? 'chat-bubble rounded-box' : 'chat-bubble chat-bubble-primary rounded-box'}`}>
           { data.content }
         </div>
         {!start && 

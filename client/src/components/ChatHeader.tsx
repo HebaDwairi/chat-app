@@ -1,6 +1,10 @@
+import { useSocketContext } from "../contexts/SocketContext"
 
 
 const ChatHeader = ({ user }) => {
+
+  const { onlineUsers } = useSocketContext();
+
   return (
     <div className="fixed top-0 w-full md:w-7/10 bg-neutral/20 backdrop-blur-md z-10">
       <div className=" h-12 p-2 flex gap-5 items-center m-4">
@@ -11,7 +15,9 @@ const ChatHeader = ({ user }) => {
         </div>
         <div className="flex flex-col  gap-1">
           <p className="font-black ">{user.fullName}</p>
-          <p className="text-base-content/80 text-sm">online</p>
+          <p className="text-base-content/80 text-sm">
+           { onlineUsers.includes(user.id) ? 'online' : 'away' }
+          </p>
         </div>
       </div>
     </div>

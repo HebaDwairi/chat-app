@@ -1,7 +1,10 @@
 import { useAuth } from "../contexts/AuthContext";
+import useChatScroll from "../hooks/useScroll";
 import Message from "./Message";
 
 const Messages = ({ messageData }) => {
+
+  const ref = useChatScroll(messageData.messages) as React.MutableRefObject<HTMLDivElement>;
 
   if(!messageData.messages) {
     return <div>
@@ -14,7 +17,8 @@ const Messages = ({ messageData }) => {
   const messages = messageData.messages;
 
   return (
-    <div className="mx-1 p-3 overflow-auto py-24">
+    
+    <div className="mx-1 p-3 overflow-auto py-24" ref={ref}>
       {
         messages.map(message => 
         <Message 
