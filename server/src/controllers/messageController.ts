@@ -89,17 +89,29 @@ export const getMessages = async (request: Request, response: Response, next: Ne
           orderBy: {
             createdAt: 'asc',
           }
+        },
+        participants: {
+          include: {
+            user: true,
+          }
         }
-      }
+      },
     });
+
+    const sender = conversation?.participants.find(participant => participant.userId === senderId)?.user;
+    const receiver = conversation?.participants.find(participant => participant.userId === receiverId)?.user;
 
 
     if(!conversation) {
-      response.status(200).json([]);
+      response.status(200).json({});
       return;
     }
     
-    response.status(200).json(conversation.messages);
+    response.status(200).json({
+      sender,
+      receiver,
+      messages: conversation.messages
+    });
   }
   catch (error) {
     next(error);
