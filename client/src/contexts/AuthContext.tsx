@@ -1,6 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from "react"
-import axios from 'axios';
-//import Toast from 'react-hot-toast';
+import userService from "../services/users";
 
 type AuthUserType = {
   fullName: string,
@@ -24,26 +23,18 @@ const AuthProvider = ({ children }: {children: React.ReactNode}) =>{
   const [authUser, setAuthUser] = useState<AuthUserType | null>(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await axios.get('/api/users/me');
-        const data = res.data;
-
-        if(!data.ok) {
-          throw new Error(data.error);
-        }
-
-        setAuthUser(data);
-      }
-      catch (error: unknown) {
-        console.log(error);
-        //Toast.error(error.message);
-      }
-      finally {
+    userService
+      .getUser()
+      .then(res => {
+        console.log(res);
+        setAuthUser(res);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
         setIsLoading(false);
-      }
-    }
-    getUser();
+      });
   }, []);
 
   return (

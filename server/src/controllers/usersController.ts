@@ -9,7 +9,7 @@ export const login = async (request:Request, response:Response, next: NextFuncti
 
     if(!(username && password)) {
       response.status(400).json({
-        message: 'all fields are required'
+        error: 'all fields are required'
       });
       return;
     }

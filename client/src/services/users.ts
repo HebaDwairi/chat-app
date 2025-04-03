@@ -29,9 +29,14 @@ const logout = async () => {
   return res.data;
 }
 
+const getUser = async () => {
+  const res = await axios.get(`${baseUrl}/me`);
+  return res.data;
+}
 
 export default{
   signup,
   login,
   logout,
+  getUser
 }

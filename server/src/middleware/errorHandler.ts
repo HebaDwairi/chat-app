@@ -15,7 +15,7 @@ const errorHandler = (err: any, request: Request, response: Response, next: Next
     
     switch (err.code) {
       case 'P2002':
-        error.message = 'Unique constraint failed';
+        error.message = 'Username must be unique';
         break;
       case 'P2025':
         error.statusCode = 404;
@@ -42,7 +42,7 @@ const errorHandler = (err: any, request: Request, response: Response, next: Next
 
 
   response.status(error.statusCode).json({
-    message: error.message
+    error: error.message
   });
 }
 
