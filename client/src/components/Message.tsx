@@ -6,7 +6,7 @@ const Message : React.FC<MessageProps>= ({ start, data, user}) => {
 
   const dateObj = new Date(data.createdAt);
   const formattedDate = dateObj.toLocaleString("en-US", {
-    year: "numeric",
+    year: "2-digit",
     month: "short",
     day: "numeric", 
     hour: "numeric", 
@@ -17,7 +17,7 @@ const Message : React.FC<MessageProps>= ({ start, data, user}) => {
     <div>
       <div className={`chat ${start ? 'chat-start' : 'chat-end'}`}>
         <div className="chat-header">
-          <span >{user.fullName}</span>
+          <span >{user.fullName.split(' ')[0]}</span>
           <time className="text-xs opacity-50">{ formattedDate }</time>
         </div>
         <div className={`${start ? 'chat-bubble rounded-box' : 'chat-bubble chat-bubble-primary rounded-box'}`}>

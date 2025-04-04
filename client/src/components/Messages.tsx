@@ -22,9 +22,9 @@ const Messages = ({ messageData }) => {
       {
         messages.map(message => 
         <Message 
-          start={ message.senderId !== user.id } 
+          start={ (message.senderId !== user.id) && !message.optimistic } 
           data={message}
-          user={message.senderId === user.id? user : chatUser}
+          user={message.senderId === user.id? user : message.optimistic ? user : chatUser}
           key={message.id}/>)
       }
     </div>

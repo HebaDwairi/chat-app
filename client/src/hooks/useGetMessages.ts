@@ -20,7 +20,7 @@ const useGetMessages = (userId: string) => {
   const { isError, error, data, isLoading } = useQuery({
     queryKey: ["messages", userId],
     queryFn: () => fetchMessages(userId),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 5 * 1000,
   });
 
   useEffect(() => {
@@ -33,11 +33,14 @@ const useGetMessages = (userId: string) => {
     if (!socket) return;
 
     const handleNewMessage = (newMessage: any) => {
-      newMessage.shouldShake = true;
-
-      queryClient.setQueryData(["messages", userId], (oldMessages: any) => {
-        return oldMessages ? [...oldMessages, newMessage] : [newMessage];
-      });
+      queryClient.setQueryData(
+        ['messages', userId],
+        (cacheData) => ({
+          ...cacheData,
+          messages: [...cacheData.messages, newMessage],
+        })
+      );
+      console.log('new message received', newMessage);
     };
 
     socket.on("newMessage", handleNewMessage);
