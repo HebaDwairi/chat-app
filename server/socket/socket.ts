@@ -21,18 +21,18 @@ export const getReceiverSocketId = (receiverId: string) => {
 
 io.on('connection', (socket) => {
   const userId = socket.handshake.query.userId as string;
-  console.log('userconnexted')
 
-  if(userId) {
+  if (userId) {
     socketMap[userId] = socket.id;
   }
 
-  socket.emit('getOnlineUsers', Object.keys(socketMap));
+  io.emit('getOnlineUsers', Object.keys(socketMap));
+  console.log('user connected', Object.keys(socketMap));
 
   socket.on('disconnect', () => {
-    console.log('userdisconnected')
+    console.log('user disconnected');
     delete socketMap[userId];
-    socket.emit('getOnlineUsers', Object.keys(socketMap));
+    io.emit('getOnlineUsers', Object.keys(socketMap));
   });
 });
 
@@ -41,4 +41,4 @@ export {
   app,
   io,
   server
-};
+}; 

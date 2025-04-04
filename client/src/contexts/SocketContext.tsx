@@ -15,34 +15,45 @@ const SocketContextProvider = ({ children }: { children: ReactNode }) => {
   const socketRef = useRef<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
-  useEffect(() => {
-    if(!isLoading && authUser) {
-      const socket = io(socketURL, {
-        query: {
-          userId: authUser.id,
-        }
-      });
+useEffect(() => {
+  if (!isLoading && authUser) {
+    console.log("Connecting to socket...");
 
-      socketRef.current = socket;
-
-      socket.on('getOnlineUsers', (users: string[]) => {
-        setOnlineUsers(users);
-      });
-
-      return () => {
-        socket.close();
-        socketRef.current = null;
+    const socket = io(socketURL, {
+      query: {
+        userId: authUser.id,
       }
+    });
+
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
+    socket.on("getOnlineUsers", (users: string[]) => {
+      console.log("Updated online users:", users);
+      setOnlineUsers(users);
+    });
+
+    return () => {
+      console.log("Closing socket...");
+      socket.close();
+      socketRef.current = null;
+    };
+  } else if (!isLoading && !authUser) {
+    if (socketRef.current) {
+      console.log("No auth user, closing socket...");
+      socketRef.current.close();
+      socketRef.current = null;
     }
-    else if(!isLoading && !authUser) {
-      if(socketRef.current) {
-        return () => {
-          socketRef.current?.close();
-          socketRef.current = null;
-        }
-      }
-    }
-  }, [authUser, isLoading]);
+  }
+}, [authUser, isLoading]);
+  
 
   return(
     <SocketContext.Provider value={{
