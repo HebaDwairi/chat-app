@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import userService from '../services/users';
 import toast from "react-hot-toast";
 import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
 import { useChatUser } from "../contexts/chatUserContext";
+import { User } from "../types/user";
 
-const SearchResult = ({ user, setSearchQuery }) => {
+const SearchResult = ({ user, setSearchQuery }:
+  { user: User, setSearchQuery: Dispatch<SetStateAction<string>> }) => {
+
   const navigate = useNavigate();
   const { setChatUser }  = useChatUser();
 
@@ -35,7 +38,7 @@ const SearchResult = ({ user, setSearchQuery }) => {
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [result, setResult] = useState([]);
+  const [result, setResult] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

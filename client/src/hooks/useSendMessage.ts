@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { Message, MessagesData } from "../types/message";
 
 const sendMessage = async (userId: string, content: string) => {
   const res = await axios.post(`/api/messages/send/${userId}`, { content });
@@ -29,7 +30,7 @@ const useSendMessage = () => {
 
       const previousData = queryClient.getQueryData(["messages", userId]);
 
-      queryClient.setQueryData(["messages", userId], (old: any) => ({
+      queryClient.setQueryData(["messages", userId], (old: MessagesData) => ({
         ...old,
         messages: [...(old?.messages || []), optimisticMessage],
       }));
@@ -45,10 +46,10 @@ const useSendMessage = () => {
     },
 
     onSuccess: (newMessage, variables) => {
-      queryClient.setQueryData(["messages", variables.userId], (old: any) => {
+      queryClient.setQueryData(["messages", variables.userId], (old: MessagesData) => {
         if (!old) return { messages: [newMessage] };
 
-        const messages = old.messages.filter((msg: any) => !msg.optimistic);
+        const messages = old.messages.filter((msg: Message) => !msg.optimistic);
 
         return {
           ...old,

@@ -2,8 +2,9 @@ import { useAuth } from "../contexts/AuthContext";
 import { useChatUser } from "../contexts/chatUserContext";
 import useChatScroll from "../hooks/useScroll";
 import Message from "./Message";
+import { MessagesData } from "../types/message";
 
-const Messages = ({ messageData }) => {
+const Messages = ({ messageData }: { messageData: MessagesData }) => {
 
   const ref = useChatScroll(messageData.messages) as React.MutableRefObject<HTMLDivElement>;
   const { authUser  } = useAuth();

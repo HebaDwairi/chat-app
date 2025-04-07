@@ -7,7 +7,7 @@ interface ISocketContext {
 	onlineUsers: string[];
 }
 
-const SocketContext = createContext<ISocketContext | undefined>(undefined);
+const SocketContext = createContext<ISocketContext | null>(null);
 const socketURL = import.meta.env.MODE === "development" ? "http://localhost:3001" : "/";
 
 const SocketContextProvider = ({ children }: { children: ReactNode }) => {
@@ -67,7 +67,11 @@ useEffect(() => {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSocketContext = () => {
-  return useContext(SocketContext);
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocketContext must be used within a SocketContextProvider");
+  }
+  return context;
 }
 
 export default SocketContextProvider;

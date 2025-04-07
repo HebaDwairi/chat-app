@@ -1,7 +1,8 @@
 import { useSocketContext } from "../contexts/SocketContext"
+import { User } from "../types/user";
 
 
-const ChatHeader = ({ user }) => {
+const ChatHeader = ({ user }: {user: User}) => {
 
   const { onlineUsers } = useSocketContext();
 

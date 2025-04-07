@@ -1,5 +1,10 @@
-interface MessageProps {
-  start: boolean;
+import type { Message } from "../types/message";
+import { User } from "../types/user";
+
+type MessageProps = {
+  start: boolean,
+  data: Message,
+  user: User,
 }
 
 const Message : React.FC<MessageProps>= ({ start, data, user}) => {
