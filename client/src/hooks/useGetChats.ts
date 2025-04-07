@@ -18,7 +18,7 @@ const useGetChats = () => {
   const { isError, error, data, isLoading } =  useQuery({
     queryKey: ['chats'],
     queryFn: fetchChats,
-    staleTime: 5 * 60 * 1000,  
+    staleTime: 1000,  
   });
 
   useEffect(() => {

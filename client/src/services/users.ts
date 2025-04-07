@@ -34,9 +34,15 @@ const getUser = async () => {
   return res.data;
 }
 
+const searchUsers = async (searchQuery: string) => {
+  const res = await axios.get(`${baseUrl}/search?query=${searchQuery}`);
+  return res.data;
+}
+
 export default{
   signup,
   login,
   logout,
-  getUser
+  getUser,
+  searchUsers
 }

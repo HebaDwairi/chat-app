@@ -36,9 +36,7 @@ const useSendMessage = () => {
 
       return { previousData, userId };
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['messages', variables.userId] });
-    },
+    
     onError: (_err, _variables, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(["messages", context.userId], context.previousData);
@@ -57,6 +55,9 @@ const useSendMessage = () => {
           messages: [...messages, newMessage],
         };
       });
+      queryClient.invalidateQueries({
+        queryKey: ['chats'],
+      });
     },
   });
 
@@ -72,3 +73,12 @@ const useSendMessage = () => {
 };
 
 export default useSendMessage;
+/*
+onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ 
+        queryKey: ['messages', variables.userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['chats'],
+      })
+    }, */

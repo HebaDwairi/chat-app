@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useSocketContext } from "../contexts/SocketContext";
+import { useChatUser } from "../contexts/chatUserContext";
 
 const ChatElement = ({ chat }) => {
 
   const navigate = useNavigate();
+  const { setChatUser } = useChatUser();
 
   const handleClick = () => {
+    setChatUser(chat.user);
+    
     navigate(`/chats/${chat.user.id}`);
   }
 

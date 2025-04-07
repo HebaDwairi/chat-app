@@ -1,10 +1,13 @@
 import { useAuth } from "../contexts/AuthContext";
+import { useChatUser } from "../contexts/chatUserContext";
 import useChatScroll from "../hooks/useScroll";
 import Message from "./Message";
 
 const Messages = ({ messageData }) => {
 
   const ref = useChatScroll(messageData.messages) as React.MutableRefObject<HTMLDivElement>;
+  const { authUser  } = useAuth();
+  const { chatUser } = useChatUser();
 
   if(!messageData.messages) {
     return <div>
@@ -12,8 +15,8 @@ const Messages = ({ messageData }) => {
     </div>
   }
 
-  const user = messageData.sender;
-  const chatUser = messageData.receiver;
+  const user = messageData.sender || authUser;
+  const chatUsr = messageData.receiver || chatUser;
   const messages = messageData.messages;
 
   return (
@@ -24,7 +27,7 @@ const Messages = ({ messageData }) => {
         <Message 
           start={ (message.senderId !== user.id) && !message.optimistic } 
           data={message}
-          user={message.senderId === user.id? user : message.optimistic ? user : chatUser}
+          user={message.senderId === user.id? user : message.optimistic ? user : chatUsr}
           key={message.id}/>)
       }
     </div>
