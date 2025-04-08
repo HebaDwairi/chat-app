@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from '../db/prisma.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
-import { ConversationParticipant } from "@prisma/client";
 
 export const sendMessage = async (request: Request, response: Response, next: NextFunction) => {
   try {
@@ -74,7 +73,9 @@ export const sendMessage = async (request: Request, response: Response, next: Ne
   }
 }
 
-
+interface Participant {
+  userId: string,
+}
 
 export const getMessages = async (request: Request, response: Response, next: NextFunction) => {
   try {
@@ -109,9 +110,9 @@ export const getMessages = async (request: Request, response: Response, next: Ne
       },
     });
 
-    const sender = conversation?.participants.find((participant: ConversationParticipant) =>
+    const sender = conversation?.participants.find((participant: Participant) =>
        participant.userId === senderId)?.user;
-    const receiver = conversation?.participants.find((participant: ConversationParticipant) =>
+    const receiver = conversation?.participants.find((participant: Participant) =>
       participant.userId === receiverId)?.user;
 
 
@@ -135,7 +136,8 @@ interface ChatParticipant {
   user: {
     fullName: string;
     id: string;
-    profilePicture: string;}
+    profilePicture: string;
+  }
 }
 
 interface ChatMessage {
