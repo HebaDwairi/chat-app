@@ -17,7 +17,7 @@ const Login = () => {
 
     setData({
       ...data,
-      [name]: value
+      [name]: value.trim()
     });
   }
 

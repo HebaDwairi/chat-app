@@ -23,7 +23,7 @@ const Signup = () => {
 
     setData({
       ...data,
-      [name]: value
+      [name]: value.trim()
     });
   }
 
