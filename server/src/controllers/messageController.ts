@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from '../db/prisma.js';
 import { getReceiverSocketId, io } from "../socket/socket.js";
+import { ConversationParticipant } from "@prisma/client";
 
 export const sendMessage = async (request: Request, response: Response, next: NextFunction) => {
   try {
@@ -74,6 +75,7 @@ export const sendMessage = async (request: Request, response: Response, next: Ne
 }
 
 
+
 export const getMessages = async (request: Request, response: Response, next: NextFunction) => {
   try {
     if(!request.user) {
@@ -107,8 +109,10 @@ export const getMessages = async (request: Request, response: Response, next: Ne
       },
     });
 
-    const sender = conversation?.participants.find(participant => participant.userId === senderId)?.user;
-    const receiver = conversation?.participants.find(participant => participant.userId === receiverId)?.user;
+    const sender = conversation?.participants.find((participant: ConversationParticipant) =>
+       participant.userId === senderId)?.user;
+    const receiver = conversation?.participants.find((participant: ConversationParticipant) =>
+      participant.userId === receiverId)?.user;
 
 
     if(!conversation) {
@@ -125,6 +129,24 @@ export const getMessages = async (request: Request, response: Response, next: Ne
   catch (error) {
     next(error);
   }
+}
+
+interface ChatParticipant {
+  user: {
+    fullName: string;
+    id: string;
+    profilePicture: string;}
+}
+
+interface ChatMessage {
+  content: string;
+  createdAt: Date;
+  senderId: string;
+}
+
+interface Conversation {
+  participants: ChatParticipant[];
+  messages: ChatMessage[];
 }
 
 export const getChats = async (request: Request, response: Response, next: NextFunction) => {
@@ -170,7 +192,7 @@ export const getChats = async (request: Request, response: Response, next: NextF
       }
     });
 
-    const chats = conversations.map(e => {
+    const chats = conversations.map((e: Conversation) => {
       return {
         user: e.participants[0].user,
         message: e.messages[0],
