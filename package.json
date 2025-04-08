@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --watch server/src --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm server/src/index.ts"
+    "dev": "NODE_ENV=development nodemon --watch server/src --exec node --no-warnings=ExperimentalWarning --loader ts-node/esm server/src/index.ts",
+    "build": "tsc && npm install && prisma generate --schema=./server/prisma/schema.prisma && npm install --prefix client && npm run build --prefix client",
+    "start": "NODE_ENV=production node server/dist/src/index.js"
   },
   "type": "module",
   "repository": {
